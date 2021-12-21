@@ -1,0 +1,13 @@
+{% load static %} <!-- bootstrap css static폴더 가져오기 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Hi~ pyweb</title>
+    <link rel="stylesheet" href="{% static 'board/css/bootstrap.css' %}"> <!-- bootstrap css링크 연결 -->
+</head>
+<body>
+{% block content %} <!-- 기본 템플릿 안에 삽입될 내용 시작 -->
+{% endblock %} <!-- 기본 템플릿 안에 삽입될 내용 끝 -->
+</body>
+</html>

@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from board.models import Question, Answer
@@ -13,13 +13,15 @@ from board.forms import QuestionForm, AnswerForm
 
 def index(request): #게시판(board)의 index(전체 페이지의 index가 아님)
     #질문 목록
-    question_list = Question.objects.all() #내가 만든 질문에 대한 db전체 조회
+    #question_list = Question.objects.all() #내가 만든 질문에 대한 db전체 조회
+    question_list = Question.objects.order_by('-create_date') #최신 작성일 기준으로 내림차순으로 정렬 추가
     return render(request, 'board/question_list.html',
                   {'question_list':question_list})
 
 def detail(request, question_id):
     #질문/답변 상세
-    question = Question.objects.get(id=question_id)
+    #question = Question.objects.get(id=question_id)
+    question = get_object_or_404(Question, pk=question_id) #경로에 오류가 있을 때 404(페이지가 없음, 에러는 아님)로 처리, pk는 0001_initial.py에서 id의 primary_key를 의미
     return render(request, 'board/detail.html', {'question':question})
 
 def question_create(request):
@@ -37,7 +39,8 @@ def question_create(request):
 
 def answer_create(request, question_id):
     #답변 등록
-    question = Question.objects.get(id=question_id) #해당id의 질문 객체 생성
+    #question = Question.objects.get(id=question_id) #해당id의 질문 객체 생성
+    question = get_object_or_404(Question, pk=question_id) 
     if request.method == "POST":
         form = AnswerForm(request.POST)
         if form.is_valid(): #에러가 났을 때는 flask처럼 넘어가지는 않는다

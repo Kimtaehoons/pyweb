@@ -1,0 +1,10 @@
+{% if form.errors %} <!-- 오류 표시 시작 -->
+    {% for field in form %} <!-- 필드(항목)이 여러개이므로 중첩for문 사용 -->
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+            <strong>{{ field.label }}</strong>
+            {{ error }}
+        </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}

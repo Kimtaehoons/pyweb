@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index), #127.0.0.1:8000/ 페이지 열기
     path('board/', include('board.urls')),
+    path('common/', include('common.urls')),
 ]

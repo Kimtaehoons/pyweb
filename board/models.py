@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 class Question(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE) #User는 직접 만든 것이 아니고 가져다가 쓴 것
     subject = models.CharField(max_length=100) #제목 칼럼
     content = models.TextField() #질문 내용
     create_date = models.DateTimeField() #질문 작성일
@@ -9,6 +11,7 @@ class Question(models.Model):
         return self.subject
 
 class Answer(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE) #외래키, 질문이 삭제되면 답변도 같이 삭제 / 제목 칼럼
     content = models.TextField() #답변 내용
     create_date = models.DateTimeField() #답변 작성일

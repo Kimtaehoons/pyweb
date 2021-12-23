@@ -7,6 +7,7 @@
             <tr>
                 <th>번호</th>
                 <th>제목</th>
+                <th>글쓴이</th>
                 <th>작성일시</th>
             </tr>
         </thead>
@@ -21,6 +22,7 @@
                             {{ question.subject }} <!-- 제목 찾기 -->
                         </a>
                     </td>
+                    <td>{{ question.author }}</td>
                     <td>{{ question.create_date }}</td> <!-- 작성일시 찾기 -->
                 </tr>
                 {% endfor %}

@@ -37,11 +37,23 @@
                 {{ answer.content }}
             </div>
             <div class="d-flex justify-content-end">
+                {% if answer.modify_date %}
+                <div class="badge badge-light text-left p-2">
+                     <div class="mb-2">modified at</div>
+                    <div>{{ answer.modify_date }}</div>
+                </div>
+                {% endif %}
                  <div class="badge badge-light text-left p-2">
                      <div class="mb-2">{{ answer.author }}</div>
                      <div>{{ answer.create_date }}</div>
                  </div>
             </div>
+            {% if request.user == question.author %}
+            <div>
+                <a href="{% url 'board:answer_modify' answer.id %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="#" data-uri="{% url 'board:answer_delete' answer.id %}" class="delete btn btn-sm btn-outline-secondary">삭제</a>
+            </div>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -61,8 +73,7 @@
             <textarea name="content" rows="7" cols="50" class="form-control"
                         {% if not user.is_authenticated %}
                             disabled
-                        {% endif %}>
-            </textarea> <!-- 비 회원은 답변 창 비활성화 -->
+                        {% endif %}></textarea> <!-- 비 회원은 답변 창 비활성화 -->
         </div>
         <input type="submit" value="답변 등록" class="btn btn-primary">
     </form>

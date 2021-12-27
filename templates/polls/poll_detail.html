@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <section>
+        <div class="jumbotron">
+            <div class="text-center">
+                <h1>투표 하기</h1>
+            </div>
+        </div>
+        <h4 style="margin: 20px 280px">{{ question.question_text }}</h4>
+        <form action="{% url 'poll:vote' question.id %}" method="post"
+              style="width: 500px; margin: 0 auto;"> <!-- 객체가 있어야 여백설정이 되므로 width값 설정 필요 -->
+            {% csrf_token %}
+            {% if error %}
+                <p style="font-size: 1.2rem">{{ error }}</p>
+            {% endif %}
+            {% for choice in question.choice_set.all %} <!-- 질문을 가져와서 -->
+            <p style="font-size: 1.2rem">
+                <input type="radio" name="choice" id="choice" value="{{ choice.id }}"> <!-- 버튼이 먼저나오게 하기 -->
+                <label for="choice">{{ choice.choice_text }}</label> <!-- choice에 레이블에 답변 담아서 불러오기 -->
+            </p>
+            {% endfor %}
+            <p><input type="submit" value="투표"></p> <!-- 불러온 것 전송 -->
+        </form>
+    </section>
+</div>
+    {% endblock %}

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 class Question(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE) #User는 직접 만든 것이 아니고 가져다가 쓴 것
+    author = models.ForeignKey(User, on_delete=models.CASCADE) #User(common의 User)는 직접 만든 것이 아니고 가져다가 쓴 것(그래서 총 3개의 class가 있음)
     subject = models.CharField(max_length=100) #제목 칼럼
     content = models.TextField() #질문 내용
     create_date = models.DateTimeField() #질문 작성일

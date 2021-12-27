@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <section>
+        <div class="jumbotron">
+            <div class="text-center">
+                <h1>설문 목록</h1>
+            </div>
+        </div>
+        <div class="row">
+            {% if question_list %} <!-- views.py에서 'question_list'를 넘겨받으면 -->
+                {% for question in question_list %}
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                        <!-- <a href="/poll/{{ question.id }}">{{ question.question_text }}</a> 절대경로  -->
+                        <a href="{% url 'poll:detail' question.id %}"> <!-- url 네임 스페이스로 경로 처리 -->
+                            <h5 style="line-height: 2rem">{{ question.question_text }}</h5>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %} <!-- 데이터가 삭제되었다면 -->
+            <p>설문이 없습니다</p>
+            {% endif %}
+        </div>
+    </section>
+</div>
+{% endblock %}

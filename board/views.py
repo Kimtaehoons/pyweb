@@ -13,7 +13,11 @@ from board.forms import QuestionForm, AnswerForm
     #season_list = ['봄', '여름', '가을', '겨울']
     #return render(request, 'board/question_list.html', {'season':season, 'season_list':season_list })
 
-def index(request): #게시판(board)의 index(전체 페이지의 index가 아님)
+def index(request): #전체 페이지의 index
+    return render(request, 'board/index.html')
+
+def boardlist(request):
+    #질문/답변의 index
     #질문 목록
     #question_list = Question.objects.all() #내가 만든 질문에 대한 db전체 조회
     question_list = Question.objects.order_by('-create_date') #최신 작성일 기준으로 내림차순으로 정렬 추가

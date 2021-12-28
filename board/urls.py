@@ -14,4 +14,5 @@ urlpatterns = [
     path('question/delete/<int:question_id>/', views.question_delete, name='question_delete'), #질문 삭제
     path('answer/modify/<int:answer_id>/', views.answer_modify, name='answer_modify'), #답변 수정
     path('answer/delete/<int:answer_id>/', views.answer_delete, name='answer_delete'), #답변 삭제
+    path('vote/question/<int:question_id>/', views.vote_question, name='vote_question'), #질문 추천
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from board.models import Question, Answer
+from board.models import Question, Answer, Comment
 
 #질문 등록 폼 만들기
 class QuestionForm(forms.ModelForm):
@@ -16,6 +16,11 @@ class AnswerForm(forms.ModelForm):
     class Meta:  # 내부클래스, 중첩클래스
         model = Answer
         fields = ['content']
-        labels = {
-            'content': '내용',
-        }
+        labels = {'content': '내용'}
+
+#댓글 등록 폼 만들기
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        labels = {'content': '댓글 내용'}

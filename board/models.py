@@ -25,7 +25,7 @@ class Answer(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE) #댓글 글쓴이
     content = models.TextField() #댓글 내용
-    create_date = models.DateTimeField #작성일
+    create_date = models.DateTimeField() #작성일
     modify_date = models.DateTimeField(null=True, blank=True)
     question = models.ForeignKey(Question, null=True, blank=True, on_delete=models.CASCADE)
     answer = models.ForeignKey(Answer, null=True, blank=True, on_delete=models.CASCADE)

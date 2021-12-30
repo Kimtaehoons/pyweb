@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -21,12 +22,24 @@ def boardlist(request):
     #질문/답변의 index
     #질문 목록
     #question_list = Question.objects.all() #내가 만든 질문에 대한 db전체 조회
-    question_list = Question.objects.order_by('-create_date') #최신 작성일 기준으로 내림차순으로 정렬 추가
     #페이지 처리
     page = request.GET.get('page', 1) #127.0.0.1:8000/로 들어가면 기본 1페이지 보임
+    kw = request.GET.get('kw', '') #검색어 가져오기
+    #검색
+    question_list = Question.objects.order_by('-create_date')  #최신 작성일 기준으로 내림차순으로 정렬 추가
+    if kw:
+        question_list = question_list.filter(
+            Q(subject__icontains=kw) | #제목 검색
+            Q(content__icontains=kw) | #내용 검색
+            Q(author__username__icontains=kw) | #질문 글쓴이 검색
+            Q(answer__author__username__icontains=kw) | #답변 글쓴이 검색
+            Q(answer__content__icontains=kw) #답변 글쓴이 검색
+        ).distinct() #유일한 것 검색
+
     paginator = Paginator(question_list, 10) #페이지 당 10개씩 설정
     page_obj = paginator.get_page(page) #페이지 가져오기
-    return render(request, 'board/question_list.html', {'question_list':page_obj})
+    context = {'question_list':page_obj, 'page':page, 'kw':kw}
+    return render(request, 'board/question_list.html', context)
 
 def detail(request, question_id):
     #질문/답변 상세
@@ -44,7 +57,7 @@ def question_create(request):
             question.create_date = timezone.now() #날짜/시간 저장
             question.author = request.user #추가한 칼럼인 글쓴이에 세션(request.user) 저장
             question.save() #실제 저장
-            return redirect('board:index') #이동 경로(app_name인 board) 저장
+            return redirect('board:boardlist') #이동 경로(app_name인 board) 저장
     else: #GET방식
         form = QuestionForm() #form객체 생성
     return render(request, 'board/question_form.html', {'form':form})
@@ -139,7 +152,7 @@ def comment_create_question(request, question_id):
             comment.save() #실제 저장
             return redirect('board:detail', question_id=question.id)
     else:
-        form = CommentForm() #빈 폼
+        form = CommentForm() #빈 폼(댓글 추가버튼을 눌렀을 때 작성할 수 있는 빈 폼이 뜬다)
     context = {'form': form}
     return render(request, 'board/comment_form.html', context)
 
@@ -155,7 +168,7 @@ def comment_modify_question(request, comment_id):
     #질문 댓글 수정
     comment = get_object_or_404(Comment, pk=comment_id)
     if request.method == "POST":
-        form = CommentForm(request.POST, instance=comment) #변경 된 입력 내용
+        form = CommentForm(request.POST, instance=comment) #변경된 입력 내용
         if form.is_valid():
             comment = form.save(commit=False)
             comment.author = request.user

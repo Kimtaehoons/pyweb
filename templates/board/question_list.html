@@ -1,10 +1,19 @@
 {% extends 'base.html' %} <!-- base.html로 표준화작업 실시 -->
 {% load board_filter %} <!-- 템플릿 필터 파일 로드 -->
 {% block content %} <!-- 기본 템플릿 안에 삽입될 내용 시작 -->
-<div class="container">
+<div class="container my-3">
     <section>
         <!-- base.html로 표준화작업을 원치 않을 때는 % include 'navbar.html' %를 여기에 넣고 개별로 적용할 시 지금 페이지 여백대로 적용되는 장점은 있음) -->
-        <table class="table">
+        <div class="row justify-content-end mb-2"> <!-- 검색 입력 상자와 찾기 버튼 -->
+            <div class="col-4 input-group">
+                <input type="text" class="kw form-control" value="{{ kw|default_if_none:'' }}">
+                <div class="input-group-append">
+                    <button type="button" id="btn_search"
+                            class="btn btn-outline-secondary">찾기</button>
+                </div>
+            </div>
+        </div>
+        <table class="table"> <!-- 게시판 목록 -->
             <thead class="thead-dark">
                 <tr>
                     <th>번호</th>
@@ -22,8 +31,9 @@
                         <td>{{ question_list.paginator.count|sub:question_list.start_index|sub:forloop.counter0|add:1 }}</td> <!-- 템플릿 필터 일련번호(공식) 적용 -->
                         <td>
                             {% if question.voter.all.count > 0 %}
-                            <span class="badge badge-warning px-2 py-1"></span>
+                            <span class="badge badge-warning px-2 py-1">
                                 {{ question.voter.all.count }}
+                            </span>
                             {% endif %}
                         </td>
                         <td>
@@ -49,8 +59,10 @@
             <!-- 이전 페이지 -->
             {% if question_list.has_previous %}
             <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ question_list.previous_page_number }}">이전</a>
+<!--                <a class="page-link"-->
+<!--                   href="?page={{ question_list.previous_page_number }}">이전</a>-->
+                <a class="page-link" href="#"
+                   data-page="{{ question_list.previous_page_number }}">이전</a>
             </li>
             {% else %} <!-- 이전 페이지가 없으면 -->
             <li class="page-item disabled">
@@ -61,21 +73,27 @@
             {% for page_number in question_list.paginator.page_range %}
                 {% if page_number == question_list.number %}
                 <li class="page-item active">
-                    <a class="page-link"
-                       href="?page={{ page_number }}">{{ page_number }}</a>
+<!--                    <a class="page-link"  -->
+<!--                       href="?page={{ page_number }}">{{ page_number }}</a> 아래 제이쿼리로 처리 -->
+                    <a class="page-link" href="#"
+                       data-page="{{ page_number }}">{{ page_number }}</a>
                 </li>
                 {% else %}
                 <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_number }}">{{ page_number }}</a>
+<!--                    <a class="page-link"-->
+<!--                       href="?page={{ page_number }}">{{ page_number }}</a>-->
+                    <a class="page-link" href="#"
+                       data-page="{{ page_number }}">{{ page_number }}</a>
                 </li>
                 {% endif %}
             {% endfor %}
             <!-- 다음 페이지 -->
             {% if question_list.has_next %}
             <li class="page-item">
-                <a class="page-link"
-                   href="?page={{ question_list.next_page_number }}">다음</a>
+<!--                <a class="page-link"-->
+<!--                   href="?page={{ question_list.next_page_number }}">다음</a>-->
+                <a class="page-link" href="#"
+                   data-page="{{ question_list.next_page_number }}">다음</a>
             </li>
             {% else %} <!-- 다음 페이지가 없으면 -->
             <li class="page-item disabled">
@@ -86,9 +104,32 @@
         <!-- 페이징 처리 끝 -->
         <a class="btn btn-primary"
            href="{% url 'board:question_create' %}">질문 등록</a> <!-- board urls의 app_name을 받는 것 -->
+        <form action="" method="get" id="searchForm"> <!-- 검색 폼 만들기(page, kw get방식으로, 주소창에 보면 페이지마다 주소가 나오기 때문)-->
+            <input type="hidden" name="kw" id="kw"> <!-- name은 view함수로, id는 제이쿼리로 넘겨주는 것 -->
+            <input type="hidden" name="page" id="page">
+        </form>
     </section>
 </div>
 {% endblock %} <!-- 기본 템플릿 안에 삽입될 내용 끝 -->
+{% block script %}
+<script>
+    $(document).ready(function(){
+        //페이지 처리
+        $(".page-link").on('click', function(){ //페이지 번호를 클릭하면
+            $("#page").val($(this).data("page")); //클릭한 해당 페이지 번호를 page 필드에 가져옴
+            $("#searchForm").submit(); //폼을 전송(form에서 submit대신 제이쿼리에서 함수로 처리)
+        });
+        //검색 처리
+        $("#btn_search").on('click', function(){
+            let text = $(".kw").val() //입력된 검색어 값을
+            $("#kw").val(text); //폼의 kw 필드에 설정
+            $("#page").val(1); //1페이지를 page 필드에 설정
+            $("#searchForm").submit(); //폼 전송
+        });
+    });
+</script>
+{% endblock %}
+
 
 <!-- db가져오기 연습 -->
 <!--    <h2>질문 목록 연습</h2>-->
